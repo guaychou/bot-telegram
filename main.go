@@ -8,54 +8,14 @@ import (
 	"strconv"
 	"strings"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/gomodule/redigo/redis"
+	rdc "github.com/guaychou/redisClient"
 	owm "github.com/guaychou/openweatherapi"
 	)
 
-func newPool() *redis.Pool {
-	return &redis.Pool{
-		// Maximum number of idle connections in the pool.
-		MaxIdle: 20,
-		// max number of connections
-		MaxActive: 20,
-		// Dial is an application supplied function for creating and
-		// configuring a connection.
-		Dial: func() (redis.Conn, error) {
-			c, err := redis.DialURL(os.Getenv("REDIS_URL"))
-			if err != nil {
-				panic(err.Error())
-			}
-			return c, err
-		},
-	}
-}
-
-func redisClientSet(c redis.Conn, key string, value string) string {
-	_, err := c.Do("SET", key, value)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return "Value of "+key+" has been stored."
-}
-
-func redisClientGet(c redis.Conn,key string) string{
-	values, err := redis.String(c.Do("GET", key))
-	if err == redis.ErrNil {
-		return "Key "+key+" does not exist !!! .\nSET first with /set command !!!"
-	} else if err != nil {
-		log.Fatal(err)
-	}
-	return values
-}
-func redisClientFlush(c redis.Conn) string {
-	err := c.Send("FLUSHALL")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return "All key values has been deleted."
-}
 func main() {
-	pool := newPool()
+
+	var kotatmp string
+	pool:= rdc.NewPool(20,20)
 	conn := pool.Get()
 	defer conn.Close()
 	api_key:=os.Getenv("OWM_TOKEN_API")
@@ -92,9 +52,9 @@ func main() {
 			case "status":
 				msg.Text = "I'm ok."
 			case "wifirumah":
-				msg.Text="Password: "+ redisClientGet(conn,"wifirumah")
+				msg.Text="Password: "+ rdc.RedisClientGet(conn,"wifirumah")
 			case "wifikos":
-				msg.Text="Password: "+ redisClientGet(conn,"wifikos")
+				msg.Text="Password: "+ rdc.RedisClientGet(conn,"wifikos")
 			case "set":
 				split:=strings.Split(update.Message.Text," ")
 				if len(split)!=3{
@@ -102,7 +62,7 @@ func main() {
 				}else if len(split)==3{
 					key:=split[1]
 					value:=split[2]
-					msg.Text=redisClientSet(conn,key,value)
+					msg.Text=rdc.RedisClientSet(conn,key,value)
 				}
 			case "get":
 				split:=strings.Split(update.Message.Text," ")
@@ -110,20 +70,33 @@ func main() {
 					msg.Text="Some argument is missing. \nUse /get <key> to get the value."
 				}else if len(split)==2 {
 					key:=split[1]
-					msg.Text=redisClientGet(conn,key)
+					msg.Text=rdc.RedisClientGet(conn,key)
 				}
 			case "flush":
 				if update.Message.From.UserName==os.Getenv("USERNAME_TELEGRAM"){
-					msg.Text=redisClientFlush(conn)
+					msg.Text=rdc.RedisClientFlush(conn)
 				}else{
 					msg.Text="Forbidden Status: You are not my lord !!!"
 				}
-			case "cuaca":
+			case "del":
 				split:=strings.Split(update.Message.Text," ")
 				if len(split)!=2{
-					msg.Text="Some argument is missing. \nUse /cuaca <namaKota> to get the value."
+					msg.Text="Some argument is missing. \nUse /get <key> to get the value."
 				}else if len(split)==2 {
-					kota:=split[1]
+					key:=split[1]
+					msg.Text=rdc.RedisClientDelete(conn,key)
+				}
+			case "cuaca":
+				split:=strings.Split(update.Message.Text," ")
+				if len(split)<2{
+					msg.Text="Some argument is missing. \nUse /cuaca <namaKota> to get the value."
+				}else if len(split)>=2 {
+					for i := 1;  i<len(split); i++ {
+						fmt.Println(split[i])
+						kotatmp+=split[i]+"%20"
+					}
+					kota:=kotatmp
+					kotatmp=""
 					result:=owm.GetWeather(kota,api_key)
 					if result.Cod!=200{
 						msg.Text="City not found."
@@ -138,7 +111,6 @@ func main() {
 						msg.Text="Kota: "+city+"\nCuaca: "+description+"\nSuhu: "+suhu+" °C\nSuhu Minimal: "+suhuMin+" °C\nSuhu Maksimal: "+suhuMaks+" °C\nAngka Kelembaban: "+humidity+"\nStatus Kelembaban: "+kelembaban
 					}
 				}
-
 			default:
 				msg.Text = "I don't know that command"
 			}

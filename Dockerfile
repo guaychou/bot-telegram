@@ -3,6 +3,7 @@ RUN apk add git
 RUN mkdir /app
 WORKDIR /app
 RUN go get github.com/gomodule/redigo/redis
+RUN go get github.com/guaychou/redisClient
 RUN go get github.com/go-telegram-bot-api/telegram-bot-api
 RUN go get github.com/guaychou/openweatherapi
 COPY main.go /app
