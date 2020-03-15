@@ -3,14 +3,15 @@ package main
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
 	"strings"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	rdc "github.com/guaychou/redisClient"
 	owm "github.com/guaychou/openweatherapi"
-	)
+	"github.com/robfig/cron/v3"
+)
 
 func main() {
 
@@ -18,16 +19,17 @@ func main() {
 	pool:= rdc.NewPool(20,20)
 	conn := pool.Get()
 	defer conn.Close()
+	log.Info("Health Checking redis started . . . ")
+	c := cron.New()
+	c.AddFunc("*/1 * * * *", func() { log.Info("Healthcheck Status: "+ rdc.RedisClientPing(conn))  })
+	c.Start()
 	api_key:=os.Getenv("OWM_TOKEN_API")
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOTCHOU_TOKEN_API"))
 	if err != nil {
 		log.Panic(err)
 	}
-
 	bot.Debug = true
-
 	log.Printf("Authorized on account %s", bot.Self.UserName)
-
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
