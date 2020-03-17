@@ -2,20 +2,16 @@
 package main
 
 import (
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
-	"strconv"
 	"strings"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	rdc "github.com/guaychou/redisClient"
-	owm "github.com/guaychou/openweatherapi"
 	"github.com/robfig/cron/v3"
 )
 
 func main() {
 
-	var kotatmp string
 	pool:= rdc.NewPool(20,20)
 	conn := pool.Get()
 	defer conn.Close()
@@ -23,7 +19,6 @@ func main() {
 	c := cron.New()
 	c.AddFunc("*/1 * * * *", func() { log.Info("Healthcheck Status: "+ rdc.RedisClientPing(conn))  })
 	c.Start()
-	api_key:=os.Getenv("OWM_TOKEN_API")
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOTCHOU_TOKEN_API"))
 	if err != nil {
 		log.Panic(err)
@@ -89,30 +84,9 @@ func main() {
 					msg.Text=rdc.RedisClientDelete(conn,key)
 				}
 			case "cuaca":
-				split:=strings.Split(update.Message.Text," ")
-				if len(split)<2{
-					msg.Text="Some argument is missing. \nUse /cuaca <namaKota> to get the value."
-				}else if len(split)>=2 {
-					for i := 1;  i<len(split); i++ {
-						fmt.Println(split[i])
-						kotatmp+=split[i]+"%20"
-					}
-					kota:=kotatmp
-					kotatmp=""
-					result:=owm.GetWeather(kota,api_key)
-					if result.Cod!=200{
-						msg.Text="City not found."
-					}else {
-						city:=result.Name
-						humidity:=strconv.Itoa(result.Humidity)
-						description:=result.Weather[0].Description
-						suhu:=fmt.Sprintf("%.2f",result.Temp)
-						suhuMaks:=fmt.Sprintf("%.2f",result.Temp_max)
-						suhuMin:=fmt.Sprintf("%.2f",result.Temp_min)
-						kelembaban:=result.Kelembapan
-						msg.Text="Kota: "+city+"\nCuaca: "+description+"\nSuhu: "+suhu+" °C\nSuhu Minimal: "+suhuMin+" °C\nSuhu Maksimal: "+suhuMaks+" °C\nAngka Kelembaban: "+humidity+"\nStatus Kelembaban: "+kelembaban
-					}
-				}
+				msg.Text=cuaca(update.Message.Text)
+			case "corona":
+				msg.Text=corona(update.Message.Text)
 			default:
 				msg.Text = "I don't know that command"
 			}

@@ -5,7 +5,7 @@ WORKDIR /app
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
-COPY main.go .
+COPY *.go /app/
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bot-telegram-chou
 RUN adduser -S -D -H -h /app appuser
 
