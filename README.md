@@ -15,7 +15,7 @@ Before you run this client example you must have three component
 2. Redis URI (example : redis://username:password@hostname:port)
 3. Openweather API Token (you can get it from openweatherapi.org)
 
-After that you must you ___environment variable___ to get it work
+After that you must set your ___environment variable___ to get it work
 
 Default Key | Description |
 --- | --- |
