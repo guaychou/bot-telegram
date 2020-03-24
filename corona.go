@@ -10,7 +10,7 @@ import (
 func corona(message string)string{
 	split:=strings.Split(message," ")
 	if len(split)<2{
-		return "Some argument is missing. \nUse /corona <namaKota> to get the value."
+		return "Some argument is missing. \nUse /corona <namaNegara> to get the value."
 	}else if len(split)>=2 {
 		country:=split[1]
 		result:=cga.GetCorona(country)
