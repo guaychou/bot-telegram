@@ -34,6 +34,6 @@ In my case, i deploy my bot into heroku platform with free usage. Some addons li
 
 /cuaca cityName : Get current weather from specific city name  
 
-/set key value : store value to redis
+/set key value : Store value to redis
 
 /get key : Get value from specific key
