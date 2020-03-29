@@ -5,6 +5,8 @@ github.com/gomodule/redigo v2.0.0+incompatible h1:K/R+8tc58AaqLkqG2Ol3Qk+DR/TlNu
 github.com/gomodule/redigo v2.0.0+incompatible/go.mod h1:B4C85qUVwatsJoIUNIfCRsp7qO0iAmpGFZ4EELWSbC4=
 github.com/guaychou/corona-api v1.0.0 h1:n3T5dBtiBaLhLetTAhNf+mQwAdAC759646Qd2BmtAaU=
 github.com/guaychou/corona-api v1.0.0/go.mod h1:kux7JaMiKnJykGLayZVoPGP/rQiOpVfAiotziWY9OgI=
+github.com/guaychou/corona-api v1.0.1 h1:YA3558cWYAqOio2NZ/GLpt0cpzXMvVjGrfMR/SbnYlY=
+github.com/guaychou/corona-api v1.0.1/go.mod h1:kux7JaMiKnJykGLayZVoPGP/rQiOpVfAiotziWY9OgI=
 github.com/guaychou/openweatherapi v1.0.0 h1:JZPIbetQUSnmhhlWQkY3b/4ErodcceEItOytI3DryAo=
 github.com/guaychou/openweatherapi v1.0.0/go.mod h1:7vtDdWZ+bk5WFHilN377jpDQTe0SPmyw46x+O0HUCjs=
 github.com/guaychou/redisClient v0.0.0-20200315025029-309397dbfd87 h1:qKeM5wBomP+38ABRSDN77zJ0fryKhALfL4Bh8ZH5txg=
