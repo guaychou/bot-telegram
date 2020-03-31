@@ -2,23 +2,23 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
-	"os"
-	"strings"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	rdc "github.com/guaychou/redisClient"
 	"github.com/robfig/cron/v3"
+	log "github.com/sirupsen/logrus"
+	"os"
+	"strings"
 )
 
-func main() {
 
+
+func main() {
+	// Create redis connection
 	pool:= rdc.NewPool(20,20)
 	conn := pool.Get()
 	defer conn.Close()
-	log.Info("Health Checking redis started . . . ")
-	c := cron.New()
-	c.AddFunc("*/1 * * * *", func() { log.Info("Healthcheck Status: "+ rdc.RedisClientPing(conn))  })
-	c.Start()
+
+
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOTCHOU_TOKEN_API"))
 	if err != nil {
 		log.Panic(err)
@@ -29,7 +29,9 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
-
+	// Create cronjob
+	c := cron.New()
+	cronfunction(c, &conn, bot)
 	for update := range updates {
 		if update.Message == nil {
 			continue

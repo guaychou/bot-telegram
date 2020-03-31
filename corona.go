@@ -14,7 +14,6 @@ func corona(message string)string{
 	}else if len(split)>=2 {
 		country:=split[1]
 		result:=cga.GetCorona(country)
-		fmt.Println(result.Recovered.Value)
 		if result.Recovered.Value==-1 || result.Deaths.Value==-1 || result.Confirmed.Value==-1{
 			return "Country not found."
 		}else {
