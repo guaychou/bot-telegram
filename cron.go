@@ -54,9 +54,7 @@ func getHeaderMessage(grupmessage *tgbotapi.MessageConfig){
 	h,m,_:=time.Now().Clock()
 	jam:=strconv.Itoa(h)
 	menit:=strconv.Itoa(m)
-	if m==0{
-		menit=menit+"0"
-	}else if m<10{
+	if m < 10{
 		menit="0"+menit
 	}
 	grupmessage.Text="*Pukul " + jam +":"+ menit +"*\n"
