@@ -41,8 +41,8 @@ func coronaUpdate(bot *tgbotapi.BotAPI){
 
 func weatherUpdate(bot *tgbotapi.BotAPI){
 	getHeaderMessage(&grupmessageWeather)
-	grupmessageWeather.Text=grupmessageCorona.Text+cuaca("/cuaca Pasuruan")
-	_,err:=bot.Send(grupmessageCorona)
+	grupmessageWeather.Text=grupmessageWeather.Text+cuaca("/cuaca Pasuruan")
+	_,err:=bot.Send(grupmessageWeather)
 	if err!=nil{
 		log.Error(err)
 	}else{
