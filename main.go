@@ -89,6 +89,8 @@ func main() {
 				msg.Text=cuaca(update.Message.Text)
 			case "corona":
 				msg.Text=corona(update.Message.Text)
+			case "kurs":
+				msg.Text=exchange(update.Message.Text)
 			default:
 				msg.Text = "I don't know that command"
 			}
